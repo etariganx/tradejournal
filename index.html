@@ -152,26 +152,45 @@
             window.scrollTo({ top: aiBox.offsetTop - 50, behavior: 'smooth' });
         }
 
-        function publishJournal() {
-            if (!currentSymbol || !currentAnalysisHtml) return;
-            const now = new Date();
-            const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
-            const imgUrl = document.getElementById('screenshotUrl').value;
-            
-            const entry = {
-                id: Date.now(),
-                symbol: currentSymbol,
-                date: dateStr,
-                analysis: currentAnalysisHtml,
-                img: imgUrl
-            };
-            
-            journalData.unshift(entry);
-            localStorage.setItem('tradingJournals', JSON.stringify(journalData));
-            renderDropdown(); renderList();
-            alert("Journal dipublish!");
-            document.getElementById('screenshotUrl').value = ""; // Reset input
-        }
+        // Ganti fungsi publish agar lebih informatif
+function publishJournal() {
+    if (!currentSymbol || !currentAnalysisHtml) {
+        alert("Silakan cari koin dan klik 'Update Info' terlebih dahulu!");
+        return;
+    }
+
+    const imgUrl = document.getElementById('screenshotUrl').value;
+    
+    // Validasi sederhana jika user lupa memasukkan link gambar
+    if (!imgUrl) {
+        const confirmTanpaGambar = confirm("Kamu belum memasukkan link gambar/screenshot. Tetap Publish?");
+        if (!confirmTanpaGambar) return;
+    }
+
+    const now = new Date();
+    // Format: Day-Month-Year Hour:Minute
+    const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+    
+    const entry = {
+        id: Date.now(),
+        symbol: currentSymbol,
+        date: dateStr,
+        analysis: currentAnalysisHtml,
+        img: imgUrl // Ini akan menyimpan link dari tab about:blank tadi
+    };
+    
+    journalData.unshift(entry);
+    localStorage.setItem('tradingJournals', JSON.stringify(journalData));
+    
+    renderDropdown(); 
+    renderList();
+    
+    alert(`Journal ${currentSymbol} Berhasil Disimpan!`);
+    
+    // Reset input setelah publish
+    document.getElementById('screenshotUrl').value = "";
+    document.getElementById('aiResponse').classList.add('hidden');
+}
 
         function renderDropdown() {
             const dd = document.getElementById('coinDropdown');
