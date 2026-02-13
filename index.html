@@ -3,201 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Trading Journal v3</title>
+    <title>Pro Trading Journal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; color: #1e293b; }
-        .chart-container { height: 550px; border-radius: 16px; overflow: hidden; border: 4px solid white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { height: 500px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
     </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="p-4 md:p-8">
 
-    <nav class="glass-card sticky top-0 z-50 px-6 py-4 mb-8">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="font-extrabold text-xl tracking-tighter uppercase text-slate-800">
-                <i class="fa-solid fa-Receipt text-blue-600 mr-2"></i>Crypto<span class="text-blue-600">Journal</span>
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-extrabold tracking-tighter text-slate-800 uppercase">
+                <i class="fa-solid fa-bolt-lightning text-blue-600 mr-2"></i>Trade<span class="text-blue-600">Journal</span>
             </h1>
-            <div id="statusTag" class="text-[10px] font-bold bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full uppercase tracking-widest">System Ready</div>
-        </div>
-    </nav>
-
-    <main class="max-w-5xl mx-auto px-4">
-        <div class="flex justify-center mb-10">
-            <div class="relative w-full max-w-sm">
-                <input type="text" id="coinInput" placeholder="MASUKKAN SIMBOL (CONTOH: ETH)" 
-                    class="w-full bg-white border-2 border-slate-200 rounded-2xl px-6 py-4 focus:outline-none focus:border-blue-500 font-bold uppercase tracking-widest transition-all shadow-sm">
-                <button onclick="initChart()" class="absolute right-2 top-2 bg-slate-900 text-white p-3 rounded-xl hover:bg-blue-600 transition shadow-md">
-                    <i class="fa-solid fa-chart-line"></i>
-                </button>
-            </div>
+            <div id="liveTime" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"></div>
         </div>
 
-        <div id="mainContent" class="hidden space-y-8">
-            <div id="tv_chart" class="chart-container"></div>
+        <div class="relative max-w-md mx-auto mb-8">
+            <input type="text" id="coinInput" placeholder="CONTOH: BTC atau ETH" 
+                class="w-full pl-6 pr-16 py-4 rounded-2xl border-0 shadow-lg focus:ring-2 focus:ring-blue-500 font-bold uppercase tracking-widest text-sm">
+            <button onclick="initChart()" class="absolute right-2 top-2 bg-blue-600 text-white p-3 rounded-xl hover:bg-blue-700 transition">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
 
-            <div class="flex flex-col items-center">
-                <button onclick="generateAnalysis()" class="group relative bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all active:scale-95">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-400"></i> Dapatkan Update Analisis
+        <div id="workspace" class="hidden animate-in fade-in duration-700">
+            <div id="tv_chart" class="chart-container mb-6"></div>
+
+            <div class="flex flex-col items-center gap-4">
+                <button onclick="generateAnalysis()" class="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all active:scale-95">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-400"></i> Buat Analisis Detail
                 </button>
 
-                <div id="analysisBox" class="hidden w-full mt-8 glass-card rounded-[2.5rem] p-8 md:p-12 shadow-2xl border-2 border-white">
-                    <div id="analysisContent"></div>
+                <div id="entryBox" class="hidden w-full glass rounded-[2.5rem] p-6 md:p-10 shadow-2xl mt-4">
+                    <div id="analysisOutput"></div>
                     
-                    <div class="mt-8 p-6 bg-blue-50 rounded-2xl border border-blue-100">
-                        <label class="block text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-3">Snapshot Chart (Paste/CTRL+V Di Sini)</label>
-                        <input type="text" id="imgInput" placeholder="Klik ikon kamera di chart -> Salin Gambar -> Paste di sini" 
-                            class="w-full p-4 bg-white border-2 border-dashed border-blue-200 rounded-xl text-sm focus:outline-none focus:border-blue-400 transition-all">
-                        <div id="previewArea" class="mt-4 hidden">
-                            <img id="imgPreview" src="" class="rounded-lg shadow-md max-h-48 mx-auto">
+                    <div class="mt-8">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Screenshot (Klik Input & Tekan Ctrl+V)</label>
+                        <div class="relative">
+                            <input type="text" id="pasteArea" placeholder="Tempel gambar chart di sini..." 
+                                class="w-full p-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-400 transition-all">
+                            <div id="previewWrap" class="hidden mt-4 relative">
+                                <img id="imgPreview" src="" class="w-full rounded-xl shadow-lg border-4 border-white">
+                                <button onclick="clearImage()" class="absolute -top-2 -right-2 bg-red-500 text-white w-8 h-8 rounded-full shadow-lg"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-10 flex justify-center">
-                        <button onclick="saveToJournal()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-16 py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg transition-all">
-                            Simpan Ke Journal
-                        </button>
-                    </div>
+                    <button onclick="saveEntry()" class="w-full mt-10 bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-lg transition-all">
+                        Simpan ke Database Jurnal
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="mt-24">
-            <h3 class="text-center font-black uppercase tracking-[0.5em] text-slate-400 text-xs mb-10">Riwayat Journal</h3>
-            <div id="journalHistory" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+        <div class="mt-20">
+            <h3 class="text-center font-black text-slate-300 uppercase tracking-[0.4em] text-[10px] mb-8">Riwayat Jurnal Anda</h3>
+            <div id="historyList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
-    </main>
+    </div>
 
     <script>
-        let symbol = "";
-        let currentAnalysis = "";
-        let db = JSON.parse(localStorage.getItem('my_trading_journal')) || [];
+        let currentSymbol = "";
+        let currentHTML = "";
+        let journalData = JSON.parse(localStorage.getItem('trader_db')) || [];
 
         function initChart() {
             const val = document.getElementById('coinInput').value.toUpperCase();
             if(!val) return;
-            symbol = val;
-            document.getElementById('mainContent').classList.remove('hidden');
+            currentSymbol = val;
+            document.getElementById('workspace').classList.remove('hidden');
             
             new TradingView.widget({
                 "autosize": true,
-                "symbol": "GATEIO:" + symbol + "USDT",
-                "interval": "15",
+                "symbol": "GATEIO:" + currentSymbol + "USDT",
+                "interval": "60",
                 "timezone": "Asia/Jakarta",
                 "theme": "light",
                 "style": "1",
                 "locale": "id",
-                "container_id": "tv_chart",
-                "studies": [
-                    "MASimple@tv-basicstudies",
-                    "RSI@tv-basicstudies",
-                    "StochasticRSI@tv-basicstudies"
-                ]
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tv_chart"
             });
-            window.scrollTo({top: 200, behavior: 'smooth'});
         }
 
         function generateAnalysis() {
-            const box = document.getElementById('analysisBox');
-            const content = document.getElementById('analysisContent');
+            const box = document.getElementById('entryBox');
+            const output = document.getElementById('analysisOutput');
             box.classList.remove('hidden');
 
-            currentAnalysis = `
-                <div class="text-center mb-10">
-                    <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">Forecast 1H</span>
-                    <h2 class="text-4xl font-black text-slate-900 mt-2 tracking-tighter">${symbol}/USDT</h2>
+            currentHTML = `
+                <div class="border-b border-slate-100 pb-6 mb-6">
+                    <span class="text-blue-600 font-black text-4xl tracking-tighter">${currentSymbol}/USDT</span>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Market Analysis Update</p>
                 </div>
-                <div class="grid md:grid-cols-2 gap-10 mb-10 text-sm leading-relaxed">
-                    <div class="space-y-3">
-                        <h4 class="font-black text-blue-600 uppercase tracking-widest text-xs border-b pb-2">Technical Insight</h4>
-                        <p class="text-slate-500 italic">Harga bergerak di atas Moving Average menunjukkan tren jangka pendek masih cukup kuat. Indikator RSI berada di area netral, memberikan ruang untuk kenaikan sebelum menyentuh overbought.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+                    <div class="space-y-4">
+                        <h5 class="font-black uppercase text-[10px] text-blue-500 tracking-widest">Kondisi Teknikal</h5>
+                        <p class="text-slate-500 italic leading-relaxed">Struktur market menunjukkan fase akumulasi. Support kuat terjaga, mengindikasikan potensi rebound jangka pendek.</p>
                     </div>
-                    <div class="space-y-3">
-                        <h4 class="font-black text-orange-600 uppercase tracking-widest text-xs border-b pb-2">Market Sentiment</h4>
-                        <p class="text-slate-500 italic">Volume perdagangan stabil dengan tekanan beli yang konsisten. Waspadai area resistance psikologis di angka bulat terdekat.</p>
-                    </div>
-                </div>
-                <div class="bg-slate-900 text-white p-8 rounded-[2rem] shadow-inner">
-                    <div class="grid grid-cols-3 gap-4 text-center">
-                        <div><p class="text-[9px] text-slate-400 font-bold uppercase mb-1">Entry</p><p class="font-bold text-blue-400 uppercase">Market/Limit</p></div>
-                        <div><p class="text-[9px] text-slate-400 font-bold uppercase mb-1">Stop Loss</p><p class="font-bold text-red-400 uppercase">1.5% - 2%</p></div>
-                        <div><p class="text-[9px] text-slate-400 font-bold uppercase mb-1">Take Profit</p><p class="font-bold text-emerald-400 uppercase">3% - 5%</p></div>
+                    <div class="bg-slate-900 rounded-3xl p-6 text-white">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[9px] font-bold uppercase text-slate-400">Trading Plan</span>
+                            <span class="text-[9px] font-bold bg-blue-500 px-2 py-0.5 rounded">High Accuracy</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between"><span>Entry</span><span class="font-bold text-blue-400">Market Price</span></div>
+                            <div class="flex justify-between"><span>Stop Loss</span><span class="font-bold text-red-400">2.00%</span></div>
+                            <div class="flex justify-between"><span>Target</span><span class="font-bold text-emerald-400">5.00%++</span></div>
+                        </div>
                     </div>
                 </div>
             `;
-            content.innerHTML = currentAnalysis;
-            window.scrollTo({top: box.offsetTop - 50, behavior: 'smooth'});
+            output.innerHTML = currentHTML;
+            box.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // FUNGSI DETEKSI PASTE GAMBAR
-        document.getElementById('imgInput').addEventListener('paste', function(e) {
+        // FITUR PASTE GAMBAR (ANTI RIBET)
+        document.getElementById('pasteArea').addEventListener('paste', function(e) {
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-            for (let index in items) {
-                const item = items[index];
-                if (item.kind === 'file') {
-                    const blob = item.getAsFile();
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image") !== -1) {
+                    const blob = items[i].getAsFile();
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         const base64 = event.target.result;
-                        document.getElementById('imgInput').value = base64; // Simpan base64 di input
                         document.getElementById('imgPreview').src = base64;
-                        document.getElementById('previewArea').classList.remove('hidden');
+                        document.getElementById('previewWrap').classList.remove('hidden');
+                        document.getElementById('pasteArea').value = "Gambar terdeteksi!";
+                        document.getElementById('pasteArea').classList.add('bg-emerald-50', 'border-emerald-200');
                     };
                     reader.readAsDataURL(blob);
                 }
             }
         });
 
-        function saveToJournal() {
-            const imgData = document.getElementById('imgInput').value;
+        function clearImage() {
+            document.getElementById('imgPreview').src = "";
+            document.getElementById('previewWrap').classList.add('hidden');
+            document.getElementById('pasteArea').value = "";
+            document.getElementById('pasteArea').classList.remove('bg-emerald-50', 'border-emerald-200');
+        }
+
+        function saveEntry() {
+            const img = document.getElementById('imgPreview').src;
+            if(!currentSymbol) return;
+
             const entry = {
                 id: Date.now(),
-                symbol: symbol,
+                symbol: currentSymbol,
                 time: new Date().toLocaleString('id-ID'),
-                html: currentAnalysis,
-                image: imgData
+                html: currentHTML,
+                image: img
             };
-            db.unshift(entry);
-            localStorage.setItem('my_trading_journal', JSON.stringify(db));
+
+            journalData.unshift(entry);
+            localStorage.setItem('trader_db', JSON.stringify(journalData));
             renderHistory();
-            alert("Berhasil disimpan!");
-            document.getElementById('analysisBox').classList.add('hidden');
-            document.getElementById('previewArea').classList.add('hidden');
-            document.getElementById('imgInput').value = "";
+            
+            // Reset UI
+            document.getElementById('entryBox').classList.add('hidden');
+            clearImage();
+            alert("Journal Berhasil Disimpan!");
         }
 
         function renderHistory() {
-            const list = document.getElementById('journalHistory');
-            list.innerHTML = db.map(item => `
-                <div class="glass-card p-6 rounded-[2rem] shadow-lg border border-white relative overflow-hidden group">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-[10px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-lg uppercase">${item.time}</span>
-                        <span class="font-black text-blue-600 tracking-tighter">${item.symbol}</span>
+            const container = document.getElementById('historyList');
+            container.innerHTML = journalData.map(item => `
+                <div class="glass p-6 rounded-[2.5rem] shadow-lg border border-white hover:shadow-2xl transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="font-black text-xl text-slate-800">${item.symbol}</h4>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${item.time}</p>
+                        </div>
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i>
                     </div>
-                    ${item.image ? `<img src="${item.image}" class="w-full rounded-xl mb-4 border border-slate-100 shadow-sm transition-transform group-hover:scale-[1.02]">` : ''}
-                    <div class="opacity-60 pointer-events-none transform scale-75 origin-top-left -mb-20 overflow-hidden max-h-40">
+                    ${item.image ? `<img src="${item.image}" class="w-full h-40 object-cover rounded-2xl mb-4 border border-slate-100 shadow-sm group-hover:scale-[1.02] transition">` : ''}
+                    <div class="overflow-hidden max-h-24 opacity-40 pointer-events-none scale-90 origin-top">
                         ${item.html}
                     </div>
-                    <button onclick="viewEntry(${item.id})" class="w-full mt-4 bg-slate-900 text-white py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-blue-600 transition">Lihat Detail Lengkap</button>
+                    <button onclick="restoreEntry(${item.id})" class="w-full mt-4 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition">Buka Analisis</button>
                 </div>
-            `).join('') || '<p class="text-center col-span-2 text-slate-400 text-xs italic">Belum ada data journal tersimpan.</p>';
+            `).join('') || '<p class="text-center col-span-2 text-slate-400 text-xs italic py-10">Belum ada catatan.</p>';
         }
 
-        function viewEntry(id) {
-            const entry = db.find(e => e.id === id);
+        function restoreEntry(id) {
+            const entry = journalData.find(e => e.id === id);
             if(!entry) return;
-            symbol = entry.symbol;
-            document.getElementById('mainContent').classList.remove('hidden');
+            currentSymbol = entry.symbol;
             initChart();
-            document.getElementById('analysisBox').classList.remove('hidden');
-            document.getElementById('analysisContent').innerHTML = entry.html;
-            document.getElementById('imgPreview').src = entry.image || '';
-            if(entry.image) document.getElementById('previewArea').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            document.getElementById('entryBox').classList.remove('hidden');
+            document.getElementById('analysisOutput').innerHTML = entry.html;
+            if(entry.image) {
+                document.getElementById('imgPreview').src = entry.image;
+                document.getElementById('previewWrap').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        setInterval(() => {
+            document.getElementById('liveTime').innerText = new Date().toLocaleString();
+        }, 1000);
 
         window.onload = renderHistory;
     </script>
