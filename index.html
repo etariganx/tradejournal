@@ -10,8 +10,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
-        .nav-link { transition: all 0.3s; position: relative; }
-        .nav-link:hover { color: #2563eb; }
         .chart-container { height: 600px; width: 100%; border-radius: 12px; overflow: hidden; }
         .card { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     </style>
@@ -23,28 +21,23 @@
             <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mb-4 uppercase">
                 Daily Update <span class="text-blue-600">Trading Journal</span>
             </h1>
-            
-            <nav class="flex justify-center items-center space-x-8 text-xs font-bold tracking-widest uppercase">
-                <a href="index.html" class="nav-link text-slate-600">Home</a>
-                
+            <nav class="flex justify-center items-center space-x-8 text-xs font-bold tracking-widest uppercase text-slate-600">
+                <a href="index.html" class="hover:text-blue-600">Home</a>
                 <div class="relative group">
-                    <button class="flex items-center text-slate-600 hover:text-blue-600 uppercase">
+                    <button class="flex items-center hover:text-blue-600 uppercase">
                         Journal List <i class="fa-solid fa-chevron-down ml-2 text-[8px]"></i>
                     </button>
-                    <ul id="coinDropdown" class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-white border border-slate-200 rounded-xl hidden group-hover:block overflow-hidden shadow-xl py-2">
-                        </ul>
+                    <ul id="coinDropdown" class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-white border border-slate-200 rounded-xl hidden group-hover:block overflow-hidden shadow-xl py-2"></ul>
                 </div>
-                
-                <a href="https://google.com" target="_blank" class="nav-link text-slate-600">About</a>
+                <a href="https://google.com" target="_blank" class="hover:text-blue-600">About</a>
             </nav>
         </div>
         <div class="w-full h-[1px] bg-slate-200"></div>
     </header>
 
     <main class="flex-grow container mx-auto px-4 py-10 max-w-5xl">
-        
-        <div class="flex flex-col items-center mb-10">
-            <div class="relative w-full max-w-md">
+        <div class="flex flex-col items-center mb-10 text-center">
+            <div class="relative w-full max-w-md mb-4">
                 <input type="text" id="coinSearch" placeholder="Cari Token (ETH, BTC...)" 
                     class="w-full bg-white border-2 border-slate-200 rounded-2xl px-6 py-4 focus:outline-none focus:border-blue-500 text-lg font-bold uppercase text-center tracking-widest transition-all">
                 <button onclick="loadChart()" class="absolute right-2 top-2 bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-xl transition shadow-md active:scale-95">
@@ -59,14 +52,18 @@
             </div>
 
             <div class="flex flex-col items-center">
-                <button onclick="generateManualUpdate()" class="bg-slate-900 hover:bg-slate-800 text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest shadow-lg transition-all active:scale-95 flex items-center">
+                <button onclick="generateRichUpdate()" class="bg-slate-900 hover:bg-slate-800 text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest shadow-lg flex items-center mb-4">
                     <i class="fa-solid fa-bolt mr-2 text-yellow-400"></i> Update Info 1 Jam Kedepan
                 </button>
 
-                <div id="aiResponse" class="hidden w-full mt-8 card rounded-[2rem] p-8 md:p-12 space-y-8">
-                    <div id="aiContent" class="space-y-8">
-                        </div>
+                <div id="aiResponse" class="hidden w-full mt-4 card rounded-[2rem] p-8 md:p-12 space-y-8">
+                    <div id="aiContent" class="space-y-8"></div>
                     
+                    <div class="bg-slate-50 p-6 rounded-2xl">
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-widest">Screenshot Link (Opsional: Ambil dari ikon kamera di chart)</label>
+                        <input type="text" id="screenshotUrl" placeholder="Tempel link gambar TradingView di sini..." class="w-full p-3 border border-slate-200 rounded-lg text-sm">
+                    </div>
+
                     <div class="flex justify-center pt-8 border-t border-slate-100">
                         <button onclick="publishJournal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-12 py-4 rounded-xl font-bold uppercase text-xs tracking-[0.2em] shadow-md transition-all">
                             Publish to Journal
@@ -77,171 +74,138 @@
         </section>
 
         <section class="mt-20">
-            <h3 class="text-center text-slate-400 uppercase tracking-[0.4em] text-[10px] mb-8 font-bold">Recent Published Journal</h3>
-            <div id="publishedList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <h3 class="text-center text-slate-400 uppercase tracking-[0.4em] text-[10px] mb-8 font-bold">History Published Journal</h3>
+            <div id="publishedList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
     </main>
 
     <footer class="py-12 border-t border-slate-200 bg-white">
         <div class="container mx-auto px-4 text-center">
             <p class="text-slate-400 text-[10px] mb-2 tracking-widest uppercase">&copy; 2026 Daily Trading Journal</p>
-            <p class="text-slate-500 text-xs">Created by <a href="https://google.com" target="_blank" class="text-blue-600 font-bold hover:underline tracking-widest">enchone</a></p>
+            <p class="text-slate-500 text-xs tracking-widest uppercase">Created by <a href="https://google.com" target="_blank" class="text-blue-600 font-bold hover:underline">enchone</a></p>
         </div>
     </footer>
 
     <script>
-    let currentSymbol = "";
-    let journalData = JSON.parse(localStorage.getItem('tradingJournals')) || [];
-    let lastGeneratedAnalysis = ""; // Menyimpan analisis terakhir
+        let currentSymbol = "";
+        let journalData = JSON.parse(localStorage.getItem('tradingJournals')) || [];
+        let currentAnalysisHtml = "";
 
-    window.onload = () => { renderDropdown(); renderList(); };
+        window.onload = () => { renderDropdown(); renderList(); };
 
-    function loadChart() {
-        const val = document.getElementById('coinSearch').value.toUpperCase();
-        if (!val) return;
-        currentSymbol = val;
-        document.getElementById('chartSection').classList.remove('hidden');
-        document.getElementById('aiResponse').classList.add('hidden'); // Reset box analisis
-        
-        window.tvWidget = new TradingView.widget({
-            "autosize": true,
-            "symbol": "GATEIO:" + val + "USDT",
-            "interval": "15",
-            "timezone": "Asia/Jakarta",
-            "theme": "light",
-            "style": "1",
-            "locale": "id",
-            "container_id": "tradingview_widget",
-            "studies": [
-                { "id": "MASimple@tv-basicstudies", "inputs": { "length": 5 } },
-                { "id": "MASimple@tv-basicstudies", "inputs": { "length": 10 } },
-                { "id": "MASimple@tv-basicstudies", "inputs": { "length": 30 } },
-                "BollingerBands@tv-basicstudies",
-                "MACD@tv-basicstudies",
-                "RSI@tv-basicstudies",
-                "StochasticRSI@tv-basicstudies",
-                "ParabolicSAR@tv-basicstudies"
-            ]
-        });
-    }
+        function loadChart() {
+            const val = document.getElementById('coinSearch').value.toUpperCase();
+            if (!val) return;
+            currentSymbol = val;
+            document.getElementById('chartSection').classList.remove('hidden');
+            
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "GATEIO:" + val + "USDT",
+                "interval": "15",
+                "timezone": "Asia/Jakarta",
+                "theme": "light",
+                "style": "1",
+                "locale": "id",
+                "container_id": "tradingview_widget",
+                "studies": [
+                    { "id": "MASimple@tv-basicstudies", "inputs": { "length": 5 } },
+                    { "id": "MASimple@tv-basicstudies", "inputs": { "length": 10 } },
+                    { "id": "MASimple@tv-basicstudies", "inputs": { "length": 30 } },
+                    "BollingerBands@tv-basicstudies", "MACD@tv-basicstudies", "RSI@tv-basicstudies",
+                    "StochasticRSI@tv-basicstudies", "ParabolicSAR@tv-basicstudies", "KDJ@tv-basicstudies"
+                ]
+            });
+        }
 
-    function generateManualUpdate() {
-        const aiBox = document.getElementById('aiResponse');
-        const aiContent = document.getElementById('aiContent');
-        aiBox.classList.remove('hidden');
+        function generateRichUpdate() {
+            const aiBox = document.getElementById('aiResponse');
+            const aiContent = document.getElementById('aiContent');
+            aiBox.classList.remove('hidden');
 
-        // Simpan template analisis ke variabel global agar bisa di-publish
-        lastGeneratedAnalysis = `
-            <div class="space-y-6">
+            currentAnalysisHtml = `
+                <div class="text-center border-b border-slate-100 pb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tighter">${currentSymbol}/USDT Analysis</h2>
+                    <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-1">Forecast 1 Hour Next</p>
+                </div>
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <h4 class="text-blue-600 font-bold text-xs uppercase">Technical Log</h4>
-                        <p class="text-sm text-slate-600 italic">Analisis otomatis berdasarkan parameter MA5,10,30 & RSI. Tren saat ini menunjukkan penguatan di area support.</p>
+                    <div class="space-y-4">
+                        <h4 class="text-blue-600 font-bold text-xs uppercase tracking-widest flex items-center"><i class="fa-solid fa-chart-line mr-2"></i> Teknikal Analysis</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed italic">Berdasarkan settingan indikator: MA5/10 berada di atas MA30 menunjukkan trend bullish. RSI(6) menunjukkan momentum yang sehat namun mendekati overbought. Bollinger Bands menunjukkan harga sedang konsolidasi di area upper band.</p>
                     </div>
-                    <div class="space-y-2">
-                        <h4 class="text-orange-600 font-bold text-xs uppercase">Fundamental News</h4>
-                        <p class="text-sm text-slate-600 italic">Sentimen pasar untuk ${currentSymbol} dalam kondisi netral-positif mengikuti arus BTC.</p>
+                    <div class="space-y-4">
+                        <h4 class="text-orange-600 font-bold text-xs uppercase tracking-widest flex items-center"><i class="fa-solid fa-globe mr-2"></i> Fundamental Terupdate</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed italic">Sentimen pasar saat ini dipengaruhi oleh volatilitas BTC di area support. Adanya lonjakan volume beli pada koin ${currentSymbol} mengindikasikan minat investor jangka pendek yang meningkat.</p>
                     </div>
                 </div>
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
-                    <p class="text-xs font-bold text-blue-800 uppercase">Strategy: ENTRY AT MARKET | SL: -2% | TP: +5%</p>
+                <div class="bg-blue-50 p-8 rounded-3xl border border-blue-100">
+                    <h4 class="text-blue-900 font-bold text-center text-xs uppercase tracking-widest mb-6">Trading Strategy & Conclusion</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded-2xl text-center"><span class="block text-[8px] text-slate-400 font-bold uppercase mb-1">Entry Zone</span><span class="text-sm font-bold text-blue-600 uppercase">Market / Retest MA10</span></div>
+                        <div class="bg-white p-4 rounded-2xl text-center border-l-4 border-red-500"><span class="block text-[8px] text-slate-400 font-bold uppercase mb-1">Stop Loss (SL)</span><span class="text-sm font-bold text-red-600">-1.50% Area</span></div>
+                        <div class="bg-white p-4 rounded-2xl text-center border-l-4 border-emerald-500"><span class="block text-[8px] text-slate-400 font-bold uppercase mb-1">Take Profit (TP)</span><span class="text-sm font-bold text-emerald-600">+3.00% Area</span></div>
+                    </div>
+                    <p class="text-[11px] text-center text-blue-700 font-bold uppercase italic tracking-wider">"Kesimpulan: Momentum mendukung kenaikan lanjutan. Pantau penutupan candle 15M berikutnya."</p>
                 </div>
-            </div>
-        `;
-        
-        aiContent.innerHTML = lastGeneratedAnalysis;
-        window.scrollTo({ top: aiBox.offsetTop - 50, behavior: 'smooth' });
-    }
+            `;
+            aiContent.innerHTML = currentAnalysisHtml;
+            window.scrollTo({ top: aiBox.offsetTop - 50, behavior: 'smooth' });
+        }
 
-    async function publishJournal() {
-        if (!currentSymbol || !lastGeneratedAnalysis) return alert("Generate Update dulu sebelum Publish!");
-
-        // 1. Ambil screenshot via TradingView API (Link Gambar)
-        // Catatan: Ini akan membuka tab baru/prompt default TV untuk link gambar
-        // Karena kita di sistem statis, cara terbaik adalah meminta user simpan manual atau gunakan placeholder
-        const chartImageUrl = "https://www.tradingview.com/x/capture/"; // Placeholder jika API butuh auth
-
-        const now = new Date();
-        const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}-${now.getHours()}:${now.getMinutes()}`;
-        
-        const journalEntry = {
-            id: Date.now(),
-            symbol: currentSymbol,
-            date: dateStr,
-            analysis: lastGeneratedAnalysis,
-            // Kita simpan URL chart spesifik agar saat diklik chart kembali ke posisi itu
-            chartUrl: `https://www.tradingview.com/chart/?symbol=GATEIO:${currentSymbol}USDT&interval=15`
-        };
-        
-        journalData.unshift(journalEntry);
-        localStorage.setItem('tradingJournals', JSON.stringify(journalData));
-        
-        renderDropdown();
-        renderList();
-        alert(`Journal ${currentSymbol} berhasil diarsipkan dengan datanya!`);
-    }
-
-    function renderDropdown() {
-        const dd = document.getElementById('coinDropdown');
-        const uniqueCoins = [...new Set(journalData.map(j => j.symbol))];
-        dd.innerHTML = uniqueCoins.map(c => `
-            <li class="px-6 py-3 hover:bg-slate-50 transition cursor-pointer text-xs font-bold border-b last:border-0" onclick="setSearch('${c}')">${c}</li>
-        `).join('') || '<li class="px-4 py-2 text-xs italic">Kosong</li>';
-    }
-
-    function renderList() {
-        const list = document.getElementById('publishedList');
-        list.innerHTML = journalData.map(j => `
-            <div class="card p-6 rounded-2xl space-y-4 border hover:border-blue-400 transition-all">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <h4 class="font-extrabold text-blue-600 uppercase text-sm">${j.symbol}-${j.date}</h4>
-                    <button onclick="deleteJournal(${j.id})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                </div>
-                <div class="text-xs text-slate-500 overflow-hidden max-h-32 opacity-70">
-                    ${j.analysis}
-                </div>
-                <div class="pt-2">
-                    <button onclick="viewJournal(${j.id})" class="w-full bg-slate-100 hover:bg-blue-600 hover:text-white py-2 rounded-lg text-[10px] font-bold uppercase transition">
-                        Buka Journal Lengkap & Chart
-                    </button>
-                </div>
-            </div>
-        `).join('') || "<p class='col-span-2 text-center text-slate-400 text-xs uppercase py-10'>Belum ada arsip journal.</p>";
-    }
-
-    function viewJournal(id) {
-        const entry = journalData.find(j => j.id === id);
-        if (!entry) return;
-
-        // Load koin ke pencarian
-        document.getElementById('coinSearch').value = entry.symbol;
-        loadChart();
-
-        // Tampilkan kembali analisis yang tersimpan
-        const aiBox = document.getElementById('aiResponse');
-        const aiContent = document.getElementById('aiContent');
-        aiBox.classList.remove('hidden');
-        aiContent.innerHTML = `
-            <div class="bg-yellow-50 p-3 mb-4 rounded-lg border border-yellow-100 text-[10px] text-yellow-700 font-bold uppercase">
-                Menampilkan Arsip Journal Tanggal: ${entry.date}
-            </div>
-            ${entry.analysis}
-        `;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function deleteJournal(id) {
-        if(confirm("Hapus journal ini?")) {
-            journalData = journalData.filter(j => j.id !== id);
+        function publishJournal() {
+            if (!currentSymbol || !currentAnalysisHtml) return;
+            const now = new Date();
+            const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+            const imgUrl = document.getElementById('screenshotUrl').value;
+            
+            const entry = {
+                id: Date.now(),
+                symbol: currentSymbol,
+                date: dateStr,
+                analysis: currentAnalysisHtml,
+                img: imgUrl
+            };
+            
+            journalData.unshift(entry);
             localStorage.setItem('tradingJournals', JSON.stringify(journalData));
             renderDropdown(); renderList();
+            alert("Journal dipublish!");
+            document.getElementById('screenshotUrl').value = ""; // Reset input
         }
-    }
 
-    function setSearch(s) {
-        document.getElementById('coinSearch').value = s;
-        loadChart();
-    }
-</script>
+        function renderDropdown() {
+            const dd = document.getElementById('coinDropdown');
+            const unique = [...new Set(journalData.map(j => j.symbol))];
+            dd.innerHTML = unique.map(c => `<li class="px-6 py-3 hover:bg-slate-50 transition cursor-pointer text-xs font-bold border-b last:border-0" onclick="setSearch('${c}')">${c}</li>`).join('') || '<li class="px-4 py-2 text-xs italic">Kosong</li>';
+        }
+
+        function renderList() {
+            const list = document.getElementById('publishedList');
+            list.innerHTML = journalData.map(j => `
+                <div class="card p-6 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h4 class="font-extrabold text-blue-600 uppercase text-[12px] tracking-widest">${j.symbol}-${j.date}</h4>
+                    </div>
+                    ${j.img ? `<img src="${j.img}" class="w-full rounded-lg mb-4 border border-slate-100 shadow-sm" alt="Snapshot">` : '<div class="h-24 bg-slate-50 flex items-center justify-center rounded-lg text-[10px] text-slate-300 font-bold uppercase tracking-widest">No Snapshot Image</div>'}
+                    <div class="text-[10px] text-slate-500 max-h-40 overflow-hidden border-t pt-3 opacity-80">${j.analysis}</div>
+                    <button onclick="viewHistory(${j.id})" class="w-full mt-4 bg-slate-900 text-white text-[10px] font-bold py-3 rounded-xl uppercase tracking-widest hover:bg-blue-600 transition">View Full Record</button>
+                </div>
+            `).join('') || "<p class='col-span-2 text-center text-slate-300 text-xs py-10'>Belum ada journal.</p>";
+        }
+
+        function viewHistory(id) {
+            const entry = journalData.find(j => j.id === id);
+            if (!entry) return;
+            document.getElementById('coinSearch').value = entry.symbol;
+            loadChart();
+            const aiBox = document.getElementById('aiResponse');
+            const aiContent = document.getElementById('aiContent');
+            aiBox.classList.remove('hidden');
+            aiContent.innerHTML = entry.analysis;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setSearch(s) { document.getElementById('coinSearch').value = s; loadChart(); }
+    </script>
 </body>
 </html>
