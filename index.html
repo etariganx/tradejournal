@@ -90,77 +90,134 @@
     </footer>
 
     <script>
-        let currentSymbol = "";
-        let journalData = JSON.parse(localStorage.getItem('tradingJournals')) || [];
+    let currentSymbol = "";
+    // Mengambil data dari localStorage agar tidak hilang saat refresh
+    let journalData = JSON.parse(localStorage.getItem('tradingJournals')) || [];
 
-        window.onload = () => { renderDropdown(); renderList(); };
+    window.onload = () => { 
+        renderDropdown(); 
+        renderList(); 
+    };
 
-        function loadChart() {
-            const val = document.getElementById('coinSearch').value.toUpperCase();
-            if (!val) return;
-            currentSymbol = val;
-            document.getElementById('chartSection').classList.remove('hidden');
-            
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "BINANCE:" + val + "USDT",
-                "interval": "15",
-                "timezone": "Asia/Jakarta",
-                "theme": "dark",
-                "style": "1",
-                "locale": "id",
-                "container_id": "tradingview_widget",
-                "studies": ["MASimple@tv-basicstudies","BollingerBands@tv-basicstudies","MACD@tv-basicstudies","RSI@tv-basicstudies","StochasticRSI@tv-basicstudies"]
-            });
-        }
+    function loadChart() {
+        const val = document.getElementById('coinSearch').value.toUpperCase();
+        if (!val) return;
+        currentSymbol = val;
+        document.getElementById('chartSection').classList.remove('hidden');
+        
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "BINANCE:" + val + "USDT",
+            "interval": "15",
+            "timezone": "Asia/Jakarta",
+            "theme": "dark",
+            "style": "1",
+            "locale": "id",
+            "container_id": "tradingview_widget",
+            "studies": [
+                "MASimple@tv-basicstudies",
+                "BollingerBands@tv-basicstudies",
+                "MACD@tv-basicstudies",
+                "RSI@tv-basicstudies",
+                "StochasticRSI@tv-basicstudies",
+                "ParabolicSAR@tv-basicstudies"
+            ]
+        });
+    }
 
-        function generateAIUpdate() {
-            document.getElementById('aiResponse').classList.remove('hidden');
-            document.getElementById('aiContent').innerHTML = `
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="space-y-2"><h4 class="text-blue-500 font-black text-xs uppercase tracking-widest">Teknikal</h4><p class="text-sm text-slate-400">Indikator menunjukkan momentum bullish kuat di TF 15M. RSI berada di level 65, menunjukkan masih ada ruang kenaikan.</p></div>
-                    <div class="space-y-2"><h4 class="text-blue-500 font-black text-xs uppercase tracking-widest">Fundamental</h4><p class="text-sm text-slate-400">Sentimen pasar positif terhadap ${currentSymbol} menyusul peningkatan volume perdagangan global secara mendadak.</p></div>
-                    <div class="space-y-2"><h4 class="text-blue-500 font-black text-xs uppercase tracking-widest">Kesimpulan</h4><p class="text-sm text-slate-400">Disarankan menunggu pullback kecil ke area EMA untuk entri terbaik.</p></div>
-                </div>
-                <div class="grid grid-cols-3 gap-2 bg-slate-950 p-6 rounded-2xl border border-slate-800 text-center">
-                    <div><span class="text-[8px] text-slate-500 block uppercase">Entry</span><span class="text-sm font-bold">Market</span></div>
-                    <div><span class="text-[8px] text-red-500 block uppercase">Stop Loss</span><span class="text-sm font-bold">Price -2%</span></div>
-                    <div><span class="text-[8px] text-emerald-500 block uppercase">Take Profit</span><span class="text-sm font-bold">Price +5%</span></div>
+    // Fungsi agar list koin bisa diklik
+    function setSearch(s) {
+        document.getElementById('coinSearch').value = s;
+        loadChart();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function generateAIUpdate() {
+        const aiBox = document.getElementById('aiResponse');
+        const aiContent = document.getElementById('aiContent');
+        aiBox.classList.remove('hidden');
+        aiContent.innerHTML = "<p class='text-center animate-pulse'>Sedang menganalisis data pasar dan berita fundamental...</p>";
+
+        // Catatan: Untuk hasil asli dari AI, Anda perlu integrasi API (Gemini/OpenAI)
+        // Ini adalah template respons komprehensif yang mensimulasikan pembacaan indikator Anda
+        setTimeout(() => {
+            aiContent.innerHTML = `
+                <div class="space-y-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                            <h4 class="text-blue-400 font-black text-xs uppercase tracking-[0.2em] mb-4">Technical Deep Analysis</h4>
+                            <ul class="text-sm text-slate-300 space-y-2">
+                                <li>• <strong>Trend:</strong> MA5/10 berada di atas MA30 (Strong Bullish Momentum).</li>
+                                <li>• <strong>Volatility:</strong> Bollinger Bands melebar, harga menempel di Upper Band (High Volatility).</li>
+                                <li>• <strong>Oscillators:</strong> RSI(6) di level 75 (Overbought), butuh waspada koreksi singkat. MACD menunjukkan Golden Cross valid.</li>
+                                <li>• <strong>Support/Resist:</strong> Menghadapi resistensi SRL 1.1 di area psikologis.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                            <h4 class="text-emerald-400 font-black text-xs uppercase tracking-[0.2em] mb-4">Fundamental Impact</h4>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Sentimen global sedang dipengaruhi oleh data inflasi yang lebih rendah dari ekspektasi. Hal ini memicu aliran dana (inflow) ke aset berisiko. Khusus untuk ${currentSymbol}, terdapat peningkatan aktivitas on-chain sebesar 15% dalam 24 jam terakhir yang mendukung kenaikan harga berkelanjutan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-900/20 p-6 rounded-2xl border border-blue-500/30">
+                        <h4 class="text-white font-black text-center text-xs uppercase tracking-[0.2em] mb-4">Trading Plan (1 Hour Outlook)</h4>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="p-3 bg-slate-900 rounded-xl"><span class="block text-[10px] text-slate-500 uppercase">Entry Zone</span><span class="font-bold text-blue-400">Current / Re-test MA10</span></div>
+                            <div class="p-3 bg-slate-900 rounded-xl"><span class="block text-[10px] text-red-500 uppercase">Stop Loss</span><span class="font-bold">Di bawah MA30</span></div>
+                            <div class="p-3 bg-slate-900 rounded-xl"><span class="block text-[10px] text-emerald-500 uppercase">Target TP</span><span class="font-bold">+3.5% Area</span></div>
+                        </div>
+                        <p class="mt-4 text-xs text-center text-slate-400 italic font-medium uppercase">Kesimpulan: Struktur market masih sangat kuat, namun entri terbaik adalah menunggu re-test di area support dinamis MA10.</p>
+                    </div>
                 </div>
             `;
-            window.scrollTo({ top: document.getElementById('aiResponse').offsetTop - 100, behavior: 'smooth' });
-        }
+        }, 1500);
+    }
 
-        function publishJournal() {
-            const now = new Date();
-            const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
-            const journalEntry = { symbol: currentSymbol, date: dateStr, id: Date.now() };
-            
-            journalData.unshift(journalEntry);
-            localStorage.setItem('tradingJournals', JSON.stringify(journalData));
-            
-            renderDropdown();
-            renderList();
-            alert("Journal dipublish!");
-        }
+    function publishJournal() {
+        if (!currentSymbol) return;
+        const now = new Date();
+        const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+        const journalEntry = { symbol: currentSymbol, date: dateStr, id: Date.now() };
+        
+        journalData.unshift(journalEntry); // Tambah ke awal list
+        localStorage.setItem('tradingJournals', JSON.stringify(journalData));
+        
+        renderDropdown();
+        renderList();
+        alert(`Journal ${currentSymbol} Berhasil Disimpan di Browser!`);
+    }
 
-        function renderDropdown() {
-            const dd = document.getElementById('coinDropdown');
-            const uniqueCoins = [...new Set(journalData.map(j => j.symbol))];
-            dd.innerHTML = uniqueCoins.length ? uniqueCoins.map(c => `<li class="px-4 py-3 hover:bg-blue-600 transition cursor-pointer text-xs font-bold border-b border-slate-800 last:border-0" onclick="setSearch('${c}')">${c}</li>`).join('') : '<li class="px-4 py-3 text-slate-600 text-[10px] italic">Kosong</li>';
+    function renderDropdown() {
+        const dd = document.getElementById('coinDropdown');
+        const uniqueCoins = [...new Set(journalData.map(j => j.symbol))];
+        if (uniqueCoins.length === 0) {
+            dd.innerHTML = '<li class="px-4 py-3 text-slate-600 text-[10px] italic">Belum ada journal</li>';
+            return;
         }
+        dd.innerHTML = uniqueCoins.map(c => `
+            <li class="px-4 py-3 hover:bg-blue-600 transition cursor-pointer text-xs font-bold border-b border-slate-800 last:border-0" 
+                onclick="setSearch('${c}')">${c}</li>
+        `).join('');
+    }
 
-        function renderList() {
-            const list = document.getElementById('publishedList');
-            list.innerHTML = journalData.map(j => `
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex justify-between items-center group hover:border-blue-500 transition-all">
-                    <div><h4 class="font-black text-blue-500 text-sm tracking-widest">${j.symbol}-${j.date}</h4><p class="text-[8px] text-slate-600 uppercase mt-1">Trading Log Active</p></div>
-                    <i class="fa-solid fa-arrow-right text-slate-700 group-hover:text-blue-400 transition"></i>
+    function renderList() {
+        const list = document.getElementById('publishedList');
+        if (journalData.length === 0) {
+            list.innerHTML = "<p class='col-span-2 text-center text-slate-700 text-xs italic'>Belum ada postingan terpublikasi.</p>";
+            return;
+        }
+        list.innerHTML = journalData.map(j => `
+            <div onclick="setSearch('${j.symbol}')" class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex justify-between items-center group hover:border-blue-500 transition-all cursor-pointer">
+                <div>
+                    <h4 class="font-black text-blue-500 text-sm tracking-widest">${j.symbol}-${j.date}</h4>
+                    <p class="text-[8px] text-slate-600 uppercase mt-1 tracking-widest">Click to view chart</p>
                 </div>
-            `).join('');
-        }
-
-        function setSearch(s) { document.getElementById('coinSearch').value = s; loadChart(); }
-    </script>
+                <i class="fa-solid fa-arrow-right text-slate-700 group-hover:text-blue-400 transition"></i>
+            </div>
+        `).join('');
+    }
+</script>
 </body>
 </html>
