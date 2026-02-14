@@ -4,18 +4,27 @@ export default function DailyUpdateTradingJournal() { const [search, setSearch] 
 
 const handleSearch = () => { if (!search) return; setSelectedCoin(search.toUpperCase()); if (!categories.includes(search.toUpperCase())) { setCategories([...categories, search.toUpperCase()]); } };
 
-const handleUpdate = () => { const now = new Date(); const formatted = ${selectedCoin}-${now .toLocaleDateString("en-GB") .replace(/\//g, "-")}-${now .toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) .replace(":", "-")};
+const handleUpdate = () => {
+  const now = new Date();
 
-setAnalysis({
-  title: formatted,
-  technical: "Auto technical analysis generated based on indicators configuration.",
-  fundamental: "Latest macro & on-chain sentiment placeholder.",
-  conclusion: "Potential bullish continuation. Entry near support.",
-  entry: "Entry: Market / Pullback",
-  sl: "Stop Loss: -2%",
-  tp: "Take Profit: +4%"
-});
+  const formatted = `${selectedCoin}-${now
+    .toLocaleDateString("en-GB")
+    .replace(/\//g, "-")}-${now
+    .toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    .replace(":", "-")}`;
 
+  setAnalysis({
+    title: formatted,
+    technical: "Auto technical analysis generated based on indicators configuration.",
+    fundamental: "Latest macro & on-chain sentiment placeholder.",
+    conclusion: "Potential bullish continuation. Entry near support.",
+    entry: "Entry: Market / Pullback",
+    sl: "Stop Loss: -2%",
+    tp: "Take Profit: +4%",
+  });
 };
 
 return ( <div className="min-h-screen flex flex-col bg-gray-50"> {/* Navbar */} <div className="w-full text-center py-6"> <h1 className="text-3xl font-bold">Daily Update Trading Journal</h1> <div className="flex justify-center gap-10 mt-4"> <span className="cursor-pointer">Home</span> <Select onValueChange={(val) => setSelectedCoin(val)}> <SelectTrigger className="w-40"> <SelectValue placeholder="Coin" /> </SelectTrigger> <SelectContent> {categories.map((coin) => ( <SelectItem key={coin} value={coin}> {coin} </SelectItem> ))} </SelectContent> </Select> <span className="cursor-pointer">About</span> </div> <div className="border-b-2 border-black mt-6 w-full"></div> </div>
